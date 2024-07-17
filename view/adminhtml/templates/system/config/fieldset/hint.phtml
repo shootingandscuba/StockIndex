@@ -1,0 +1,31 @@
+<?php
+/**
+ * Copyright © TAL All rights reserved.
+ */
+?>
+<div class="messages">
+    <div class="message message-info">
+        <div data-ui-id="messages-message-info">
+            <strong>Magento Multi Source MSI Processor</strong>
+            <ul style="margin: 0 0 0 2em;">
+                <li>Updates `cataloginventory_stock_item` table correctly after a product is saved.</li>
+                <li>Updates `cataloginventory_stock_item` table with correct stock status during the Magento index processes</li>
+                <li>A new indexer `tal_stockindex_indexer` is available from the CLI and is run before the inventory index.</li>
+            </ul>
+            </br>
+            <strong>MSI Default Source Collaction</strong>
+            <ul style="margin: 0 0 0 2em;">
+                <li>New Index MSI Stock Index is enabled in Index Management</li>
+                <li>A new indexer `tal_stockindex_indexer` is available from the CLI and is run before the inventory index on manual actions and cronjobs</li>
+                <li>Total stock quantity from all stock sources (including default_source) is totalled and saved to `cataloginventory_stock_item` table.</li>
+            </ul>
+            </br>
+            <strong>MSI Product Save correction</strong>
+            <ul style="margin: 0 0 0 2em;">
+                <li>Updates `cataloginventory_stock_item` table correctly after a product is saved.</li>
+                <li>Declares new preference for Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockStatus</li>
+                <li>Declares new preference for Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockItem</li>
+            </ul>
+        </div>
+    </div>
+</div>

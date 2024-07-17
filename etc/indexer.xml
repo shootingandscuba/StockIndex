@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="tal_stockindex_indexer" view_id="tal_stockindex_indexer" class="TAL\StockIndex\Model\Indexer" shared_index="tal_stockindex_indexer">
+        <title translate="true">MSI Stock Index</title>
+        <description translate="true">Corrects several issues with current MSI Stock Index tasks</description>
+        <saveHandler class="Magento\Framework\Indexer\SaveHandler\Grid"/>
+        <structure class="Magento\Framework\Indexer\GridStructure"/>
+        <dependencies>
+            <indexer id="inventory"/>
+        </dependencies>
+    </indexer>
+</config>

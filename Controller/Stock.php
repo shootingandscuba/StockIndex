@@ -69,7 +69,9 @@ class Stock {
                 ->where('_source_item.source_item_id = :source_item_id')
                 ->limit('1');
                 $results = $this->_connection->fetchAll($query, $bind);
-                $skus[] = $results['0']['product_sku']; 
+                if( !empty( $results ) ) {
+                    $skus[] = $results['0']['product_sku']; 
+                }
             }
 
             $skus = array_unique( $skus );

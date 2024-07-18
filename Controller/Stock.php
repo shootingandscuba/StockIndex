@@ -70,7 +70,8 @@ class Stock {
                 ->limit('1');
                 $results = $this->_connection->fetchAll($query, $bind);
                 if( !empty( $results ) ) {
-                    $skus[] = $results['0']['product_sku']; 
+                    $pointer = array_key_first($results);
+                    $skus[] = $results[ $pointer ]['product_sku']; 
                 }
             }
 

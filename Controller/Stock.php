@@ -89,7 +89,10 @@ class Stock {
                 ->where('_product_entity.sku = :product_sku')
                 ->limit('1');
                 $results = $this->_connection->fetchAll($query, $bind);
-                $product_ids[] = (int) $results['0']['product_id']; 
+                if( !empty( $results ) ) {
+                    $pointer = array_key_first($results);
+                    $product_ids[] = (int) $results[ $pointer ]['product_id']; 
+                }
             }
 
             $this->allStock( $product_ids );

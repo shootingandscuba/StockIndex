@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © TAL All rights reserved.
+ * Copyright Â© TAL All rights reserved.
  */
 
 namespace TAL\StockIndex\Controller;
@@ -151,7 +151,7 @@ class Stock {
             ->joinLeft(
                 ['_stock_item' => $cataloginventory_stock_item],
                 '_product_entity.entity_id =_stock_item.product_id',
-                ['_stock_item.backorders']
+                ['_stock_item.backorders','_stock_item.manage_stock','_stock_item.use_config_manage_stock']
             );
             if( !empty( $ids ) ) {
                 $query->where('_product_entity.entity_id IS NOT NULL AND _product_entity.entity_id IN (:product_ids) AND _product_entity.type_id = :product_type');
@@ -164,11 +164,14 @@ class Stock {
             $results = $this->_connection->fetchAll($query, $bind);
 
             foreach( $results as $key => $stock_item ) {
-                if( $stock_item['backorders'] > 0 ) {
-                    $results[ $key ]['backorders'] = 2;
+                if($stock_item['use_config_manage_stock'] == 0 && $stock_item['manage_stock'] == 0 ){
+                 $results[ $key ]['is_in_stock'] = 1;
+                }
+                if( $stock_item['backorders'] > 0 ) {	
+                 $results[ $key ]['backorders'] = 2;
                 }
                 if( ( $stock_item['backorders'] > 0 ) || ( $stock_item['is_in_stock'] > 0 ) ) {
-                    $results[ $key ]['is_in_stock'] = 1;
+                 $results[ $key ]['is_in_stock'] = 1;
                 }
                 $results[ $key ]['stock_id'] = 1;
                 $results[ $key ]['backorders'] = intval($results[ $key ]['backorders']);
@@ -181,6 +184,23 @@ class Stock {
                 $results,
                 ['is_in_stock','qty', 'product_id', 'backorders', 'stock_id']
             );
+
+            foreach( $results as $key => $stock_item ) {
+             $results[$key]['stock_status'] = $results[$key]['is_in_stock'];
+             unset($results[$key]['is_in_stock']);
+             unset($results[$key]['backorders']);
+             unset($results[$key]['manage_stock']);
+             unset($results[$key]['use_config_manage_stock']);
+            }
+
+            /* cataloginventory_stock_status */
+            $this->_connection->insertOnDuplicate(
+                $this->_resource->getTableName('cataloginventory_stock_status'),
+                $results,
+                ['stock_status','product_id','stock_id']
+            );
+
+
         }
         catch(Exception $e) {
             $this->_connection->rollBack();
@@ -248,19 +268,31 @@ class Stock {
                     break;
             }
 
-            /* Update database stock data */
+            /* Update `cataloginventory_stock_item` */
             $insertData = array(
                 "product_id" => $product_id,
                 "qty" => $quantity,
                 "is_in_stock" => $cataloginventory_stock_status,
                 "backorders" => $cataloginventory_backorders,
             );
-
             $this->_connection->update(
                 $cataloginventory_stock_item,
                 $insertData,
                 ['product_id = ?' => (int) $product_id ]
             );
+
+
+            /* Update `cataloginventory_stock_status` */
+            $insertData = array(
+                "product_id" => $product_id,
+                "stock_status" => $cataloginventory_stock_status
+            );
+            $this->_connection->update(
+                $this->_resource->getTableName('cataloginventory_stock_status'),
+                $insertData,
+                ['product_id = ?' => (int) $product_id ]
+            );
+
 
         }
         catch(Exception $e) {
